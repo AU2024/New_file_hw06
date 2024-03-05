@@ -1,0 +1,134 @@
+---
+title: "ll"
+author: "Dhruv"
+date: "2023-09-05"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+# library(tidyverse)  
+library(dplyr)
+library(dbplyr)
+library(utils)
+library(ISLR2)
+library(ISLR)
+library(remotes)
+library(ggplot2)
+library(GGally)
+
+```
+
+
+# 1
+
+! [pic](1.jpeg)
+
+```{r}
+knitr::include_graphics("3.jpeg")
+knitr::include_graphics("2.jpeg")
+knitr::include_graphics("1.jpeg")
+
+```
+
+
+
+# 2 
+```{r}
+knitr::include_graphics("4.jpeg")
+```
+
+# 3 
+```{r}
+carseats <- ISLR2::Carseats
+data("Carseats")
+```
+
+```{r}
+glimpse(carseats)
+summary(carseats)
+```
+```{r}
+ggpairs(carseats[,c("Sales","Price","Urban","US")])
+
+
+# Price: sales and price has a negative correlation.
+# Urban: A factor with levels No and Yes doesn't affect the sales are it remains almost the same for urban or rural location.
+# US :A factor with levels No and Yes to indicate whether the store is in the US or not. This show the postive relationship as the store which is laocted in usa has more sales.
+
+```
+## a
+```{r}
+# Fit a multiple regression model to predict Sales using predictors Price, Urban, and US.
+
+
+a <- lm(Sales~Price+Urban+US, data = carseats)
+a
+#  sales = 13 -0.05*(urban) -0.02(Urban_yes) + 1.2*(us_yes)
+```
+## b
+```{r}
+# Price: The coefficient for Price is -0.05446. It means that for each one-unit increase in the Price of the product, Sales are estimated to decrease by approximately 0.05446 units, holding all other variables constant. This suggests a negative relationship between Price and Sales.
+
+# Urban: The coefficient for UrbanYes is -0.02192. This suggests that, on average, if the store is located in an urban area (UrbanYes = 1), Sales are estimated to be approximately 0.02192 units lower than if the store were not in an urban area (UrbanYes = 0), holding all other variables constant.
+
+# US: The coefficient for USYes is 1.20057. This suggests that, on average, if the product is made in the US, Sales are estimated to be approximately 1.20057 units higher than if the product were not made in the US (USYes = 0), holding all other variables constant.
+
+```
+
+##c
+```{r}
+# Write out the model in equation form with the fitted (estimated) parameters.
+
+#  sales = 13 -0.05*(urban) -0.02(Urban_yes) + 1.2*(us_yes)
+
+# Sales represents the predicted or estimated value of Sales.
+# Price is the price of the product.
+# UrbanYes is a binary variable (1 for "Yes," indicating the store is in an urban area, and 0 for "No").
+# USYes is a binary variable (1 for "Yes," indicating the product is made in the US, and 0 for "No").
+```
+
+
+## d 
+```{r}
+# What is the Null hypothesis and for which of the predictors can you reject the null hypothesis and why?
+
+summary(a)
+#Price and USYes, based on the p-values,F-statistic
+
+```
+## e
+```{r}
+# On the basis of your response to the previous question, fit a smaller model that only uses the predictors for which there is evidence of an association with the outcome.
+a1 <- lm(Sales~Price+US, data = carseats)
+a1
+summary(a)
+summary(a1)
+```
+
+## f
+```{r}
+# Use an analysis of variance method, e.g., anova(), to compare how well the models in (a) and (e) fit the data? What is the Null hypothesis? Interpret the results of the comparison.
+
+# both the model is almost simiar but the r2 is little less in e so it still much better than a model.F-statistic is higher in reduced model comare to full model.
+```
+
+
+## g
+```{r}
+# Using the model from (e), obtain 95% confidence intervals for the coefficient(s), e.g., using confint() or broom::tidy() in R. Use the meaning of a confidence interval to interpret the results (without using the word “confident”).
+confint(a1, level = 0.95)
+
+
+# Price :
+# The negative values indicate that as the price of the product increases, Sales are estimated to decrease, and this effect is statistically significant at the 95% confidence level.
+# USYes:
+# The interval includes positive values, indicating that products made in the US are estimated to have a positive effect on Sales, and this effect is statistically significant at the 95% confidence level.
+
+```
+```{r}
+plot(a1)
+# In the residuals vs. leverage plot, we observe a few points that have high leverage
+```
+
